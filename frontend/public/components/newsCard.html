@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>핫Pick스탁 - 뉴스 카드</title>
+    <link rel="stylesheet" href="/styles/newsCard.css">
+</head>
+<body>
+    <div class="news-container">
+        <!-- 상승 뉴스 카드 -->
+        <article class="news-card bullish">
+            <button class="bookmark-btn" title="즐겨찾기">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/>
+                </svg>
+            </button>
+            
+            <div class="chart-section">
+                <img src="assets/chart-up.png" alt="상승 차트">
+            </div>
+            
+            <div class="content-section">
+                <div class="category-tags">
+                    <span class="category-tag primary">삼성전자</span>
+                    <span class="category-tag">반도체</span>
+                </div>
+                
+                <h3 class="news-title">
+                    <a href="#" onclick="readNews(1)">삼성전자 2분기 실적 시장 기대치 상회...반도체 회복세 본격화</a>
+                </h3>
+                
+                <p class="news-summary">
+                    삼성전자가 2분기 실적에서 시장 기대치를 상회하며 반도체 업황 개선이 뚜렷한 것으로 나타났다. 메모리 반도체 가격 상승과 수요 회복이 주요 요인으로...
+                </p>
+                
+                <div class="news-meta">
+                    <span class="news-time">30분 전</span>
+                    <span class="news-source">한국경제</span>
+                </div>
+            </div>
+        </article>
+
+        <!-- 하락 뉴스 카드 -->
+        <article class="news-card bearish">
+            <button class="bookmark-btn" title="즐겨찾기">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/>
+                </svg>
+            </button>
+            
+            <div class="chart-section">
+                <img src="assets/chart-down.png" alt="하락 차트">
+            </div>
+            
+            <div class="content-section">
+                <div class="category-tags">
+                    <span class="category-tag primary">네이버</span>
+                    <span class="category-tag">인터넷</span>
+                </div>
+                
+                <h3 class="news-title">
+                    <a href="#" onclick="readNews(2)">네이버 2분기 영업이익 전년비 32% 감소...라인 매출 부진 영향</a>
+                </h3>
+                
+                <p class="news-summary">
+                    네이버가 2분기 영업이익이 전년 동기 대비 32% 감소...라인 매출 부진과 광고 시장 위축이 주요 요인으로 분석됨. 하반기 회복 전략에 관심...
+                </p>
+                
+                <div class="news-meta">
+                    <span class="news-time">1시간 전</span>
+                    <span class="news-source">매일경제</span>
+                </div>
+            </div>
+        </article>
+
+        <!-- 중립 뉴스 카드 -->
+        <article class="news-card neutral">
+            <button class="bookmark-btn active" title="즐겨찾기">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/>
+                </svg>
+            </button>
+            
+            <div class="chart-section">
+                <img src="assets/chart-neutral.png" alt="횡보 차트">
+            </div>
+            
+            <div class="content-section">
+                <div class="category-tags">
+                    <span class="category-tag primary">카카오</span>
+                    <span class="category-tag">플랫폼</span>
+                </div>
+                
+                <h3 class="news-title">
+                    <a href="#" onclick="readNews(3)">카카오, 톡비즈 진출 본격화...원텍스 몰라컴퍼니 서비스 시작</a>
+                </h3>
+                
+                <p class="news-summary">
+                    카카오가 온디맨드 진출을 위해 원텍스 몰라컴퍼니 브랜드로 커머스 서비스를 시작했다. 3분 내 주문 즉시 완주 서비스로 즉석용 브랜드 전환에...
+                </p>
+                
+                <div class="news-meta">
+                    <span class="news-time">3시간 전</span>
+                    <span class="news-source">한국일보</span>
+                </div>
+            </div>
+        </article>
+
+        <!-- 로딩 중인 카드 (스켈레톤) -->
+        <article class="news-card loading">
+            <div class="chart-section">
+                <div style="background: #f0f0f0; width: 100%; height: 100%;"></div>
+            </div>
+            
+            <div class="content-section">
+                <div class="category-tags">
+                    <span class="category-tag" style="background: #f0f0f0; color: transparent;">로딩중</span>
+                </div>
+                
+                <h3 class="news-title" style="background: #f0f0f0; color: transparent; border-radius: 4px;">
+                    로딩 중인 뉴스 제목입니다...
+                </h3>
+                
+                <p class="news-summary" style="background: #f0f0f0; color: transparent; border-radius: 4px;">
+                    로딩 중인 뉴스 내용입니다...
+                </p>
+                
+                <div class="news-meta">
+                    <span style="background: #f0f0f0; color: transparent; border-radius: 4px;">로딩중</span>
+                </div>
+            </div>
+        </article>
+    </div>
+
+    <script>
+        // 뉴스 읽기 함수
+        function readNews(id) {
+            console.log(`뉴스 ${id} 읽기`);
+            // 여기에 뉴스 상세 페이지로 이동하는 로직 추가
+        }
+
+        // 즐겨찾기 버튼 클릭 이벤트
+        document.querySelectorAll('.bookmark-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                this.classList.toggle('active');
+            });
+        });
+    </script>
+</body>
+</html>
