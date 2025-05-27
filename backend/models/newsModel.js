@@ -18,5 +18,5 @@ const newsList = [
 ];
 
 export function getAllNews() {
-  return newsList;
+    return newsList;
 }

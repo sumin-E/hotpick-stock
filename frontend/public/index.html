@@ -1,24 +1,484 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <title>Hotpick Stock</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>핫Pick스탁 - 뉴스 대시보드</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+        }
+        
+        .header {
+            background: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .header h1 {
+            margin: 0;
+            color: #202124;
+            font-size: 24px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #5f6368;
+            font-size: 16px;
+        }
+
+        .error {
+            text-align: center;
+            padding: 40px;
+            color: #d93025;
+            background: #fce8e6;
+            margin: 20px;
+            border-radius: 12px;
+        }
+        
+        .news-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+            gap: 24px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .news-card {
+            display: flex;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid #f1f3f4;
+            position: relative;
+            min-height: 160px;
+            cursor: pointer;
+        }
+
+        .news-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+            border-color: #e8eaed;
+        }
+
+        .news-card.bullish::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, #1a73e8 0%, #4285f4 100%);
+        }
+
+        .news-card.bearish::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, #d93025 0%, #ea4335 100%);
+        }
+
+        .news-card.neutral::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, #34a853 0%, #137333 100%);
+        }
+
+        .chart-section {
+            flex: 0 0 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .news-card.bullish .chart-section {
+            background: linear-gradient(135deg, #4285f4 0%, #1a73e8 100%);
+        }
+
+        .news-card.bearish .chart-section {
+            background: linear-gradient(135deg, #ea4335 0%, #d93025 100%);
+        }
+
+        .news-card.neutral .chart-section {
+            background: linear-gradient(135deg, #34a853 0%, #137333 100%);
+        }
+
+        .chart-section::after {
+            font-size: 32px;
+            color: white;
+        }
+
+        .news-card.bullish .chart-section::after {
+            content: "📈";
+        }
+
+        .news-card.bearish .chart-section::after {
+            content: "📉";
+        }
+
+        .news-card.neutral .chart-section::after {
+            content: "📊";
+        }
+
+        .content-section {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .category-tags {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .category-tag {
+            background: #f1f3f4;
+            color: #5f6368;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: -0.2px;
+        }
+
+        .news-card.bullish .category-tag.primary {
+            background: #e8f0fe;
+            color: #1a73e8;
+        }
+
+        .news-card.bearish .category-tag.primary {
+            background: #fce8e6;
+            color: #d93025;
+        }
+
+        .news-card.neutral .category-tag.primary {
+            background: #e6f4ea;
+            color: #137333;
+        }
+
+        .news-title {
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 1.4;
+            color: #202124;
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            letter-spacing: -0.3px;
+        }
+
+        .news-title:hover {
+            color: #1a73e8;
+        }
+
+        .news-summary {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #5f6368;
+            margin-bottom: 16px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            letter-spacing: -0.2px;
+        }
+
+        .news-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+        }
+
+        .news-time {
+            font-size: 12px;
+            color: #9aa0a6;
+            font-weight: 400;
+        }
+
+        .news-source {
+            font-size: 12px;
+            color: #5f6368;
+            font-weight: 500;
+        }
+
+        .bookmark-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.2s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .news-card:hover .bookmark-btn {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .bookmark-btn:hover {
+            background: rgba(255, 255, 255, 1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .bookmark-btn.active {
+            color: #fbbc04;
+            opacity: 1;
+        }
+
+        .refresh-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 56px;
+            height: 56px;
+            background: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(26, 115, 232, 0.3);
+            font-size: 24px;
+            transition: all 0.2s ease;
+        }
+
+        .refresh-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(26, 115, 232, 0.4);
+        }
+
+        .refresh-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* 반응형 */
+        @media (max-width: 768px) {
+            .news-container {
+                grid-template-columns: 1fr;
+                gap: 16px;
+                padding: 16px;
+            }
+            
+            .news-card {
+                flex-direction: column;
+                min-height: auto;
+            }
+            
+            .chart-section {
+                flex: 0 0 120px;
+                width: 100%;
+            }
+            
+            .content-section {
+                padding: 16px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <h1>Hotpick Stock 뉴스 대시보드</h1>
-  <div id="news-list"></div>
+    <div class="header">
+        <h1>🔥 핫Pick스탁 - 실시간 뉴스</h1>
+    </div>
+    
+    <div id="loading" class="loading">
+        📰 뉴스를 불러오는 중...
+    </div>
+    
+    <div id="error" class="error" style="display: none;">
+        ❌ 뉴스를 불러오는데 실패했습니다.
+        <br><button onclick="loadNews()">다시 시도</button>
+    </div>
+    
+    <div id="news-container" class="news-container" style="display: none;">
+        <!-- 뉴스 카드들이 여기에 동적으로 생성됩니다 -->
+    </div>
 
-  <script>
-    fetch('/api/news')
-      .then(res => res.json())
-      .then(newsList => {
-        const container = document.getElementById('news-list');
-        newsList.forEach(news => {
-          const div = document.createElement('div');
-          div.innerHTML = `<h3>${news.title}</h3><p>${news.summary}</p><small>${news.date}</small>`;
-          container.appendChild(div);
-        });
-      });
-  </script>
+    <button class="refresh-btn" onclick="loadNews()" title="새로고침">🔄</button>
+
+    <script>
+        let newsData = [];
+
+        // 페이지 로드시 뉴스 불러오기
+        document.addEventListener('DOMContentLoaded', loadNews);
+
+        // 뉴스 데이터 불러오기
+        async function loadNews() {
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const container = document.getElementById('news-container');
+
+            // 로딩 상태 표시
+            loading.style.display = 'block';
+            error.style.display = 'none';
+            container.style.display = 'none';
+
+            try {
+                console.log('API 호출 시작...');
+                const response = await fetch('/api/news');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                newsData = await response.json();
+                console.log('받은 뉴스 데이터:', newsData);
+
+                // 뉴스 렌더링
+                renderNews();
+
+                // 성공시 UI 상태 변경
+                loading.style.display = 'none';
+                container.style.display = 'grid';
+
+            } catch (err) {
+                console.error('뉴스 로딩 실패:', err);
+                
+                // 에러시 UI 상태 변경
+                loading.style.display = 'none';
+                error.style.display = 'block';
+            }
+        }
+
+        // 뉴스 카드 렌더링
+        function renderNews() {
+            const container = document.getElementById('news-container');
+            
+            if (!newsData || newsData.length === 0) {
+                container.innerHTML = '<div class="loading">표시할 뉴스가 없습니다.</div>';
+                return;
+            }
+
+            container.innerHTML = newsData.map(news => createNewsCard(news)).join('');
+            attachEventListeners();
+        }
+
+        // 개별 뉴스 카드 생성
+        function createNewsCard(news) {
+            const sentiment = getSentiment(news.title + ' ' + news.summary);
+            const timeAgo = getTimeAgo(news.date);
+
+            return `
+                <article class="news-card ${sentiment}" data-news-id="${news.id}" onclick="openNews(${news.id})">
+                    <button class="bookmark-btn" onclick="toggleBookmark(event, ${news.id})" title="즐겨찾기">⭐</button>
+                    
+                    <div class="chart-section"></div>
+                    
+                    <div class="content-section">
+                        <div class="category-tags">
+                            <span class="category-tag primary">${news.source}</span>
+                            ${sentiment === 'bullish' ? '<span class="category-tag">상승</span>' : ''}
+                            ${sentiment === 'bearish' ? '<span class="category-tag">하락</span>' : ''}
+                            ${sentiment === 'neutral' ? '<span class="category-tag">중립</span>' : ''}
+                        </div>
+                        
+                        <h3 class="news-title">
+                            ${news.title}
+                        </h3>
+                        
+                        <p class="news-summary">
+                            ${news.summary}
+                        </p>
+                        
+                        <div class="news-meta">
+                            <span class="news-time">${timeAgo}</span>
+                            <span class="news-source">${news.source}</span>
+                        </div>
+                    </div>
+                </article>
+            `;
+        }
+
+        // 간단한 감정 분석
+        function getSentiment(text) {
+            const bullishKeywords = ['상승', '상회', '증가', '성장', '호조', '개선', '회복', '신고가', '오름', '급등'];
+            const bearishKeywords = ['하락', '하회', '감소', '부진', '위축', '우려', '손실', '신저가', '급락', '인상'];
+            
+            const lowerText = text.toLowerCase();
+            
+            const bullishCount = bullishKeywords.filter(keyword => lowerText.includes(keyword)).length;
+            const bearishCount = bearishKeywords.filter(keyword => lowerText.includes(keyword)).length;
+
+            if (bullishCount > bearishCount) return 'bullish';
+            if (bearishCount > bullishCount) return 'bearish';
+            return 'neutral';
+        }
+
+        // 상대 시간 계산
+        function getTimeAgo(dateString) {
+            const newsDate = new Date(dateString);
+            const now = new Date();
+            const diffMs = now - newsDate;
+            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            
+            if (diffDays === 0) return '오늘';
+            if (diffDays === 1) return '어제';
+            if (diffDays < 7) return `${diffDays}일 전`;
+            
+            return dateString;
+        }
+
+        // 이벤트 리스너 설정
+        function attachEventListeners() {
+            // 이미 onclick으로 처리하므로 추가 설정 불필요
+        }
+
+        // 즐겨찾기 토글
+        function toggleBookmark(event, newsId) {
+            event.stopPropagation(); // 카드 클릭 이벤트 방지
+            
+            const btn = event.target;
+            btn.classList.toggle('active');
+            
+            console.log(`뉴스 ${newsId} 즐겨찾기 토글`);
+            // TODO: 서버에 즐겨찾기 상태 전송
+        }
+
+        // 뉴스 상세 페이지 열기
+        function openNews(newsId) {
+            const news = newsData.find(n => n.id === newsId);
+            if (news && news.url) {
+                window.open(news.url, '_blank');
+            } else {
+                alert(`뉴스 ${newsId} 상세 정보를 준비 중입니다.`);
+            }
+            
+            console.log(`뉴스 ${newsId} 클릭`);
+            // TODO: 클릭 로그 서버에 전송
+        }
+    </script>
 </body>
 </html>
