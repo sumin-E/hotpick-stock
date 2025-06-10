@@ -10,6 +10,7 @@ body {
     line-height: 1.6;
     color: #333;
     background-color: #f5f5f5;
+    padding-top: 70px;
 }
 
 /* 헤더 스타일 */
@@ -183,6 +184,80 @@ body {
 
 .view-more-btn:hover {
     background-color: #2980b9;
+}
+
+/* 뷰 전환 토글 */
+.view-toggle {
+    display: flex;
+    justify-content: flex-end;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 10px;
+}
+
+.view-toggle button {
+    padding: 8px 16px;
+    border: 1px solid #e8eaed;
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #5f6368;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.view-toggle button .icon {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.view-toggle button.active {
+    background: #1a73e8;
+    color: white;
+    border-color: #1a73e8;
+}
+
+.view-toggle button:hover {
+    background: #f8f9fa;
+}
+
+.view-toggle button.active:hover {
+    background: #1557b0;
+}
+
+/* 로딩 및 에러 메시지 */
+.loading {
+    text-align: center;
+    padding: 40px;
+    color: #5f6368;
+    font-size: 16px;
+}
+
+.error {
+    text-align: center;
+    padding: 40px;
+    color: #d93025;
+    background: #fce8e6;
+    margin: 20px;
+    border-radius: 12px;
+}
+
+/* 뉴스 컨테이너 뷰 전환 */
+.news-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+    gap: 24px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.news-container.list-view {
+    grid-template-columns: 1fr;
 }
 
 /* 반응형 디자인 */

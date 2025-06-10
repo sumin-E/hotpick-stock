@@ -19,6 +19,7 @@
   border: 1px solid #f1f3f4;
   position: relative;
   min-height: 160px;
+  cursor: pointer;
 }
 
 .news-card:hover {
@@ -30,12 +31,40 @@
 /* 차트 이미지 영역 */
 .news-card .chart-section {
   flex: 0 0 140px;
-  background: #f8f9fa;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   overflow: hidden;
+}
+
+.news-card.bullish .chart-section {
+  background: linear-gradient(135deg, #4285f4 0%, #1a73e8 100%);
+}
+
+.news-card.bearish .chart-section {
+  background: linear-gradient(135deg, #ea4335 0%, #d93025 100%);
+}
+
+.news-card.neutral .chart-section {
+  background: linear-gradient(135deg, #34a853 0%, #137333 100%);
+}
+
+.news-card .chart-section::after {
+  font-size: 32px;
+  color: white;
+}
+
+.news-card.bullish .chart-section::after {
+  content: "📈";
+}
+
+.news-card.bearish .chart-section::after {
+  content: "📉";
+}
+
+.news-card.neutral .chart-section::after {
+  content: "📊";
 }
 
 .news-card .chart-section img {
@@ -87,6 +116,12 @@
 .news-card.bearish .category-tag.primary {
   background: #fce8e6;
   color: #d93025;
+}
+
+/* 중립 종목 태그 */
+.news-card.neutral .category-tag.primary {
+  background: #e6f4ea;
+  color: #137333;
 }
 
 /* 뉴스 제목 */
