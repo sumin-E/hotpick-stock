@@ -6,6 +6,8 @@ const newsList = [
     source: '경제신문',
     date: '2025-05-27',
     url: 'https://news.example.com/stock-up',
+    stocks: ['코스피', '코스닥'],
+    priority: 'normal',
   },
   {
     id: 2,
@@ -14,6 +16,8 @@ const newsList = [
     source: '뉴스데일리',
     date: '2025-05-26',
     url: 'https://news.example.com/rate-increase',
+    stocks: ['금융'],
+    priority: 'urgent',
   },
   {
     id: 3,
@@ -22,6 +26,8 @@ const newsList = [
     source: '한국경제',
     date: '2025-05-25',
     url: 'https://news.example.com/samsung-earnings',
+    stocks: ['삼성전자', '반도체'],
+    priority: 'important',
   },
   {
     id: 4,
@@ -30,6 +36,8 @@ const newsList = [
     source: '매일경제',
     date: '2025-05-24',
     url: 'https://news.example.com/naver-revenue',
+    stocks: ['네이버', 'IT서비스'],
+    priority: 'important',
   },
   {
     id: 5,
@@ -38,6 +46,8 @@ const newsList = [
     source: '서울경제',
     date: '2025-05-23',
     url: 'https://news.example.com/skhynix-ai',
+    stocks: ['SK하이닉스', '반도체'],
+    priority: 'urgent',
   },
   {
     id: 6,
@@ -46,6 +56,8 @@ const newsList = [
     source: '조선일보',
     date: '2025-05-22',
     url: 'https://news.example.com/kakao-commerce',
+    stocks: ['카카오', 'IT서비스'],
+    priority: 'normal',
   },
   {
     id: 7,
@@ -54,6 +66,8 @@ const newsList = [
     source: '한국일보',
     date: '2025-05-21',
     url: 'https://news.example.com/lg-premium',
+    stocks: ['LG전자', '가전'],
+    priority: 'important',
   },
   {
     id: 8,
@@ -62,6 +76,8 @@ const newsList = [
     source: '머니투데이',
     date: '2025-05-20',
     url: 'https://news.example.com/hyundai-china',
+    stocks: ['현대차', '자동차'],
+    priority: 'urgent',
   },
   {
     id: 9,
@@ -70,6 +86,8 @@ const newsList = [
     source: '이데일리',
     date: '2025-05-19',
     url: 'https://news.example.com/naver-cloud',
+    stocks: ['네이버', '클라우드'],
+    priority: 'normal',
   },
   {
     id: 10,
@@ -78,6 +96,8 @@ const newsList = [
     source: '전자신문',
     date: '2025-05-18',
     url: 'https://news.example.com/samsung-oled',
+    stocks: ['삼성디스플레이', '디스플레이'],
+    priority: 'important',
   },
   {
     id: 11,
@@ -86,6 +106,8 @@ const newsList = [
     source: '파이낸셜뉴스',
     date: '2025-05-17',
     url: 'https://news.example.com/lgchem-battery',
+    stocks: ['LG화학', '배터리'],
+    priority: 'important',
   },
   {
     id: 12,
@@ -94,6 +116,8 @@ const newsList = [
     source: '디지털타임스',
     date: '2025-05-16',
     url: 'https://news.example.com/skt-5g',
+    stocks: ['SK텔레콤', '통신'],
+    priority: 'normal',
   },
   {
     id: 13,
@@ -102,6 +126,8 @@ const newsList = [
     source: '비즈니스워치',
     date: '2025-05-15',
     url: 'https://news.example.com/kt-cloud',
+    stocks: ['KT', '통신', '클라우드'],
+    priority: 'important',
   },
   {
     id: 14,
@@ -110,6 +136,8 @@ const newsList = [
     source: '연합뉴스',
     date: '2025-05-14',
     url: 'https://news.example.com/posco-steel',
+    stocks: ['포스코홀딩스', '철강'],
+    priority: 'normal',
   },
   {
     id: 15,
@@ -118,6 +146,8 @@ const newsList = [
     source: '약업신문',
     date: '2025-05-13',
     url: 'https://news.example.com/celltrion-export',
+    stocks: ['셀트리온', '바이오'],
+    priority: 'urgent',
   }
 ];
 
