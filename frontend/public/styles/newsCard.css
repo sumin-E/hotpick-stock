@@ -177,6 +177,10 @@
 }
 
 /* 상승/하락 인디케이터 */
+.news-card.bullish {
+  border-left: 4px solid transparent;
+}
+
 .news-card.bullish::before {
   content: '';
   position: absolute;
@@ -185,6 +189,10 @@
   bottom: 0;
   width: 4px;
   background: linear-gradient(180deg, #1a73e8 0%, #4285f4 100%);
+}
+
+.news-card.bearish {
+  border-left: 4px solid transparent;
 }
 
 .news-card.bearish::before {
@@ -198,6 +206,10 @@
 }
 
 /* 중립 뉴스 */
+.news-card.neutral {
+  border-left: 4px solid transparent;
+}
+
 .news-card.neutral::before {
   content: '';
   position: absolute;

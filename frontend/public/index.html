@@ -25,12 +25,23 @@
     </header>
     
     <div class="view-toggle">
-        <button class="grid-view active" onclick="toggleView('grid')">
-            <span class="icon">⊞</span> 그리드
-        </button>
-        <button class="list-view" onclick="toggleView('list')">
-            <span class="icon">☰</span> 리스트
-        </button>
+        <div class="toggle-group">
+            <button class="grid-view active" onclick="toggleView('grid')">
+                <span class="icon">⊞</span> 그리드
+            </button>
+            <button class="list-view" onclick="toggleView('list')">
+                <span class="icon">☰</span> 리스트
+            </button>
+        </div>
+        
+        <div class="sort-group">
+            <button class="sort-btn active" onclick="toggleSort('latest')">
+                <span class="icon">🔄</span> 최신순
+            </button>
+            <button class="sort-btn" onclick="toggleSort('oldest')">
+                <span class="icon">⏰</span> 오래된순
+            </button>
+        </div>
     </div>
     
     <div id="loading" class="loading">
@@ -46,8 +57,30 @@
         <!-- 뉴스 카드들이 여기에 동적으로 생성됩니다 -->
     </div>
 
+    <!-- 뉴스 상세 모달 -->
+    <div id="newsModal" class="modal" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 id="modalTitle"></h2>
+                <span class="close-btn" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="modal-meta">
+                    <span id="modalSource" class="modal-source"></span>
+                    <span id="modalDate" class="modal-date"></span>
+                </div>
+                <div id="modalSummary" class="modal-summary"></div>
+                <div class="modal-actions">
+                    <a id="modalLink" href="#" target="_blank" class="view-original-btn">📰 원문 보기</a>
+                    <button onclick="closeModal()" class="close-modal-btn">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         let newsData = [];
+        let currentSortOrder = 'latest'; // 기본값: 최신순
 
         // 페이지 로드시 뉴스 불러오기
         document.addEventListener('DOMContentLoaded', loadNews);
@@ -99,8 +132,26 @@
                 return;
             }
 
-            container.innerHTML = newsData.map(news => createNewsCard(news)).join('');
+            // 정렬된 뉴스 데이터 사용
+            const sortedNews = getSortedNews();
+            container.innerHTML = sortedNews.map(news => createNewsCard(news)).join('');
             attachEventListeners();
+        }
+
+        // 뉴스 정렬 함수
+        function getSortedNews() {
+            const sorted = [...newsData].sort((a, b) => {
+                const dateA = new Date(a.date);
+                const dateB = new Date(b.date);
+                
+                if (currentSortOrder === 'latest') {
+                    return dateB - dateA; // 최신순: 큰 날짜부터
+                } else {
+                    return dateA - dateB; // 오래된순: 작은 날짜부터
+                }
+            });
+            
+            return sorted;
         }
 
         // 개별 뉴스 카드 생성
@@ -184,18 +235,52 @@
             // TODO: 서버에 즐겨찾기 상태 전송
         }
 
-        // 뉴스 상세 페이지 열기
+        // 뉴스 상세 모달 열기
         function openNews(newsId) {
             const news = newsData.find(n => n.id === newsId);
-            if (news && news.url) {
-                window.open(news.url, '_blank');
-            } else {
-                alert(`뉴스 ${newsId} 상세 정보를 준비 중입니다.`);
+            if (!news) {
+                alert(`뉴스 ${newsId} 정보를 찾을 수 없습니다.`);
+                return;
             }
+
+            // 모달 내용 채우기
+            document.getElementById('modalTitle').textContent = news.title;
+            document.getElementById('modalSource').textContent = news.source;
+            document.getElementById('modalDate').textContent = getTimeAgo(news.date);
+            document.getElementById('modalSummary').textContent = news.summary;
             
-            console.log(`뉴스 ${newsId} 클릭`);
+            const modalLink = document.getElementById('modalLink');
+            if (news.url) {
+                modalLink.href = news.url;
+                modalLink.style.display = 'inline-block';
+            } else {
+                modalLink.style.display = 'none';
+            }
+
+            // 모달 표시
+            document.getElementById('newsModal').style.display = 'block';
+            document.body.style.overflow = 'hidden'; // 스크롤 방지
+            
+            console.log(`뉴스 ${newsId} 상세 보기`);
             // TODO: 클릭 로그 서버에 전송
         }
+
+        // 모달 닫기
+        function closeModal(event) {
+            if (event && event.target !== event.currentTarget) {
+                return; // 자식 요소 클릭시 닫지 않음
+            }
+            
+            document.getElementById('newsModal').style.display = 'none';
+            document.body.style.overflow = 'auto'; // 스크롤 복원
+        }
+
+        // ESC 키로 모달 닫기
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
 
         function toggleView(view) {
             const container = document.getElementById('news-container');
@@ -211,6 +296,22 @@
                 gridBtn.classList.add('active');
                 listBtn.classList.remove('active');
             }
+        }
+
+        // 정렬 토글 함수
+        function toggleSort(sortOrder) {
+            currentSortOrder = sortOrder;
+            
+            // 버튼 활성화 상태 변경
+            document.querySelectorAll('.sort-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.closest('.sort-btn').classList.add('active');
+            
+            // 뉴스 다시 렌더링
+            renderNews();
+            
+            console.log(`정렬 방식 변경: ${sortOrder}`);
         }
 
         function toggleMobileMenu() {
