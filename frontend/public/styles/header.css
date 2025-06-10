@@ -1,0 +1,176 @@
+.header {
+    background: white;
+    position: fixed;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 1000;
+    padding: 0 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 70px;
+    margin: 0 !important;
+    width: 100% !important;
+}
+
+.header .logo {
+    font-size: 24px;
+    font-weight: 800;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    letter-spacing: -0.5px;
+    transition: all 0.3s ease;
+}
+
+.header .logo:hover {
+    transform: scale(1.02);
+}
+
+/* 로고 텍스트 스타일링 */
+.header .logo .hot {
+    color: #ff4757;
+    font-weight: 900;
+    position: relative;
+    animation: hotPulse 2s ease-in-out infinite;
+}
+
+.header .logo .pick {
+    color: #2f3542;
+    font-weight: 700;
+}
+
+.header .logo .stock {
+    background: linear-gradient(135deg, #1a73e8 0%, #4285f4 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 800;
+}
+
+.header .logo .fire-icon {
+    font-size: 26px;
+    animation: fireFlicker 1.5s ease-in-out infinite alternate;
+    filter: drop-shadow(0 0 4px rgba(255, 71, 87, 0.3));
+}
+
+/* 애니메이션 효과 */
+@keyframes hotPulse {
+    0%, 100% {
+        text-shadow: 0 0 5px rgba(255, 71, 87, 0.3);
+    }
+    50% {
+        text-shadow: 0 0 10px rgba(255, 71, 87, 0.5), 0 0 15px rgba(255, 71, 87, 0.3);
+    }
+}
+
+@keyframes fireFlicker {
+    0% {
+        transform: rotate(-1deg) scale(1);
+        filter: drop-shadow(0 0 4px rgba(255, 71, 87, 0.3));
+    }
+    100% {
+        transform: rotate(1deg) scale(1.05);
+        filter: drop-shadow(0 0 8px rgba(255, 71, 87, 0.5));
+    }
+}
+
+nav {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.nav-menu {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 30px;
+}
+
+.nav-menu li a {
+    text-decoration: none;
+    color: #5f6368;
+    font-weight: 500;
+    font-size: 14px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.nav-menu li a:hover {
+    background: #f8f9fa;
+    color: #1a73e8;
+}
+
+.nav-menu li a.active {
+    background: #e8f0fe;
+    color: #1a73e8;
+}
+
+/* 모바일 메뉴 토글 버튼 */
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #5f6368;
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* 모바일 반응형 */
+@media (max-width: 768px) {
+    .header {
+        padding: 0 16px;
+        height: 60px;
+    }
+
+    .header .logo {
+        font-size: 20px;
+    }
+
+    .header .logo .fire-icon {
+        font-size: 22px;
+    }
+
+    nav {
+        right: 16px;
+    }
+
+    .menu-toggle {
+        display: block;
+        right: 16px;
+    }
+
+    .nav-menu {
+        position: absolute;
+        top: 60px;
+        left: 0;
+        right: 0;
+        background: white;
+        flex-direction: column;
+        gap: 0;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        display: none;
+    }
+
+    .nav-menu.active {
+        display: flex;
+    }
+
+    .nav-menu li a {
+        padding: 12px 0;
+        border-radius: 0;
+    }
+}

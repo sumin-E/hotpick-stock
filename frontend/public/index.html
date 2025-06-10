@@ -3,337 +3,245 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>핫Pick스탁 - 뉴스 대시보드</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f8f9fa;
-        }
-        
-        .header {
-            background: white;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-        
-        .header h1 {
-            margin: 0;
-            color: #202124;
-            font-size: 24px;
-        }
+    <title>🔥 핫Pick스탁 | 주식 뉴스 & 종목 관리</title>
+    <link rel="stylesheet" href="styles/theme.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/header.css">
+    <link rel="stylesheet" href="styles/newsCard.css">
+    <link rel="stylesheet" href="styles/pages.css">
 
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #5f6368;
-            font-size: 16px;
-        }
-
-        .error {
-            text-align: center;
-            padding: 40px;
-            color: #d93025;
-            background: #fce8e6;
-            margin: 20px;
-            border-radius: 12px;
-        }
-        
-        .news-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
-            gap: 24px;
-            padding: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .news-card {
-            display: flex;
-            background: #ffffff;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            overflow: hidden;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid #f1f3f4;
-            position: relative;
-            min-height: 160px;
-            cursor: pointer;
-        }
-
-        .news-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-            border-color: #e8eaed;
-        }
-
-        .news-card.bullish::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-            background: linear-gradient(180deg, #1a73e8 0%, #4285f4 100%);
-        }
-
-        .news-card.bearish::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-            background: linear-gradient(180deg, #d93025 0%, #ea4335 100%);
-        }
-
-        .news-card.neutral::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-            background: linear-gradient(180deg, #34a853 0%, #137333 100%);
-        }
-
-        .chart-section {
-            flex: 0 0 140px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .news-card.bullish .chart-section {
-            background: linear-gradient(135deg, #4285f4 0%, #1a73e8 100%);
-        }
-
-        .news-card.bearish .chart-section {
-            background: linear-gradient(135deg, #ea4335 0%, #d93025 100%);
-        }
-
-        .news-card.neutral .chart-section {
-            background: linear-gradient(135deg, #34a853 0%, #137333 100%);
-        }
-
-        .chart-section::after {
-            font-size: 32px;
-            color: white;
-        }
-
-        .news-card.bullish .chart-section::after {
-            content: "📈";
-        }
-
-        .news-card.bearish .chart-section::after {
-            content: "📉";
-        }
-
-        .news-card.neutral .chart-section::after {
-            content: "📊";
-        }
-
-        .content-section {
-            flex: 1;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            position: relative;
-        }
-
-        .category-tags {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
-            flex-wrap: wrap;
-        }
-
-        .category-tag {
-            background: #f1f3f4;
-            color: #5f6368;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 500;
-            letter-spacing: -0.2px;
-        }
-
-        .news-card.bullish .category-tag.primary {
-            background: #e8f0fe;
-            color: #1a73e8;
-        }
-
-        .news-card.bearish .category-tag.primary {
-            background: #fce8e6;
-            color: #d93025;
-        }
-
-        .news-card.neutral .category-tag.primary {
-            background: #e6f4ea;
-            color: #137333;
-        }
-
-        .news-title {
-            font-size: 16px;
-            font-weight: 600;
-            line-height: 1.4;
-            color: #202124;
-            margin-bottom: 8px;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            letter-spacing: -0.3px;
-        }
-
-        .news-title:hover {
-            color: #1a73e8;
-        }
-
-        .news-summary {
-            font-size: 14px;
-            line-height: 1.5;
-            color: #5f6368;
-            margin-bottom: 16px;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            letter-spacing: -0.2px;
-        }
-
-        .news-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: auto;
-        }
-
-        .news-time {
-            font-size: 12px;
-            color: #9aa0a6;
-            font-weight: 400;
-        }
-
-        .news-source {
-            font-size: 12px;
-            color: #5f6368;
-            font-weight: 500;
-        }
-
-        .bookmark-btn {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            width: 32px;
-            height: 32px;
-            border: none;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transform: scale(0.8);
-            transition: all 0.2s ease;
-            backdrop-filter: blur(4px);
-        }
-
-        .news-card:hover .bookmark-btn {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        .bookmark-btn:hover {
-            background: rgba(255, 255, 255, 1);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-        }
-
-        .bookmark-btn.active {
-            color: #fbbc04;
-            opacity: 1;
-        }
-
-        .refresh-btn {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 56px;
-            height: 56px;
-            background: #1a73e8;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 4px 20px rgba(26, 115, 232, 0.3);
-            font-size: 24px;
-            transition: all 0.2s ease;
-        }
-
-        .refresh-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 25px rgba(26, 115, 232, 0.4);
-        }
-
-        .refresh-btn:active {
-            transform: scale(0.95);
-        }
-
-        /* 반응형 */
-        @media (max-width: 768px) {
-            .news-container {
-                grid-template-columns: 1fr;
-                gap: 16px;
-                padding: 16px;
-            }
-            
-            .news-card {
-                flex-direction: column;
-                min-height: auto;
-            }
-            
-            .chart-section {
-                flex: 0 0 120px;
-                width: 100%;
-            }
-            
-            .content-section {
-                padding: 16px;
-            }
-        }
-    </style>
 </head>
 <body>
-    <div class="header">
-        <h1>🔥 핫Pick스탁 - 실시간 뉴스</h1>
-    </div>
+    <header class="header">
+        <a href="#" onclick="showPage('home')" class="logo">
+            <span class="fire-icon">🔥</span>
+            <span class="hot">핫</span><span class="pick">Pick</span><span class="stock">스탁</span>
+        </a>
+        <nav>
+            <ul class="nav-menu">
+                <li><a href="#" onclick="showPage('home')" class="nav-link active" data-page="home">홈</a></li>
+                <li><a href="#" onclick="showPage('search')" class="nav-link" data-page="search">종목 검색</a></li>
+                <li><a href="#" onclick="showPage('watchlist')" class="nav-link" data-page="watchlist">내 관심종목</a></li>
+                <li><a href="#" onclick="showPage('settings')" class="nav-link" data-page="settings">설정</a></li>
+            </ul>
+            <button class="menu-toggle" onclick="toggleMobileMenu()">☰</button>
+        </nav>
+    </header>
     
-    <div id="loading" class="loading">
-        📰 뉴스를 불러오는 중...
-    </div>
-    
-    <div id="error" class="error" style="display: none;">
-        ❌ 뉴스를 불러오는데 실패했습니다.
-        <br><button onclick="loadNews()">다시 시도</button>
-    </div>
-    
-    <div id="news-container" class="news-container" style="display: none;">
-        <!-- 뉴스 카드들이 여기에 동적으로 생성됩니다 -->
-    </div>
+    <!-- 메인 콘텐츠 영역 -->
+    <main class="main-content" id="main-content">
+        <!-- 홈 페이지 -->
+        <section id="home-page" class="page active">
+            <div class="page-header">
+                <h1>🏠 홈 대시보드</h1>
+                <p>최신 주식 뉴스와 시장 동향을 한눈에 확인하세요</p>
+            </div>
+            
+            <!-- 종목 필터 섹션 -->
+            <div id="stock-filter" class="stock-filter" style="display: none;">
+                <div class="filter-header">
+                    <h3 class="filter-title">🏢 종목별 필터</h3>
+                    <span id="filter-count" class="filter-count">0개 선택됨</span>
+                    <div class="filter-actions">
+                        <button id="toggle-all-btn" class="toggle-all-btn" onclick="toggleAllFilters()">전체 선택</button>
+                        <button id="clear-filters-btn" class="clear-filters-btn" onclick="clearAllFilters()" disabled>초기화</button>
+                    </div>
+                </div>
+                <div id="filter-buttons" class="filter-buttons">
+                    <!-- 동적으로 생성되는 필터 버튼들 -->
+                </div>
+                <div id="selected-filters" class="selected-filters" style="display: none;">
+                    <!-- 선택된 필터 태그들 -->
+                </div>
+            </div>
 
-    <button class="refresh-btn" onclick="loadNews()" title="새로고침">🔄</button>
+            <div class="view-toggle">
+                <div class="toggle-group">
+                    <button class="grid-view active" onclick="toggleView('grid')">
+                        <span class="icon">⊞</span> 그리드
+                    </button>
+                    <button class="list-view" onclick="toggleView('list')">
+                        <span class="icon">☰</span> 리스트
+                    </button>
+                </div>
+                
+                <div class="sort-group">
+                    <button class="sort-btn active" onclick="toggleSort('latest')">
+                        <span class="icon">🔄</span> 최신순
+                    </button>
+                    <button class="sort-btn" onclick="toggleSort('oldest')">
+                        <span class="icon">⏰</span> 오래된순
+                    </button>
+                </div>
+                
+                <div class="bookmark-filter-group">
+                    <button class="bookmark-filter-btn" onclick="toggleBookmarkFilter()">
+                        <span class="icon">⭐</span> 즐겨찾기만
+                        <span id="bookmark-count" class="count">0</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div id="loading" class="loading">
+                📰 뉴스를 불러오는 중...
+            </div>
+            
+            <div id="error" class="error" style="display: none;">
+                ❌ 뉴스를 불러오는데 실패했습니다.
+                <br><button onclick="loadNews()">다시 시도</button>
+            </div>
+            
+            <div id="news-container" class="news-container" style="display: none;">
+                <!-- 뉴스 카드들이 여기에 동적으로 생성됩니다 -->
+            </div>
+        </section>
+
+
+
+        <!-- 종목 검색 페이지 -->
+        <section id="search-page" class="page">
+            <div class="page-header">
+                <h1>🔍 종목 검색</h1>
+                <p>원하는 주식 종목을 검색하고 정보를 확인하세요</p>
+            </div>
+            <div class="search-content">
+                <div class="search-box">
+                    <input type="text" id="stock-search" placeholder="종목명이나 종목코드를 입력하세요" />
+                    <button onclick="searchStock()">검색</button>
+                </div>
+                <div class="search-results" id="search-results">
+                    <!-- 검색 결과가 여기에 표시됩니다 -->
+                </div>
+            </div>
+        </section>
+
+        <!-- 내 관심종목 페이지 -->
+        <section id="watchlist-page" class="page">
+            <div class="page-header">
+                <h1>⭐ 내 관심종목</h1>
+                <p>즐겨찾기한 종목들과 관련 뉴스를 관리하세요</p>
+            </div>
+            <div class="watchlist-content">
+                <div class="watchlist-stats">
+                    <div class="stat-card">
+                        <h3>즐겨찾기 뉴스</h3>
+                        <span id="bookmarked-news-count">0</span>개
+                    </div>
+                    <div class="stat-card">
+                        <h3>관심 종목</h3>
+                        <span id="watchlist-stocks-count">0</span>개
+                    </div>
+                </div>
+                <div class="bookmarked-news" id="bookmarked-news">
+                    <!-- 즐겨찾기 뉴스들이 여기에 표시됩니다 -->
+                </div>
+            </div>
+        </section>
+
+        <!-- 설정 페이지 -->
+        <section id="settings-page" class="page">
+            <div class="page-header">
+                <h1>⚙️ 설정</h1>
+                <p>개인화 설정을 통해 더 나은 경험을 만들어보세요</p>
+            </div>
+            <div class="settings-content">
+                <div class="settings-group">
+                    <h3>테마 설정</h3>
+                    <div class="setting-item">
+                        <label for="theme-select">화면 테마</label>
+                        <select id="theme-select" onchange="changeTheme()">
+                            <option value="light">라이트 모드</option>
+                            <option value="dark">다크 모드</option>
+                            <option value="auto">시스템 설정</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="settings-group">
+                    <h3>알림 설정</h3>
+                    <div class="setting-item">
+                        <label>
+                            <input type="checkbox" id="news-notifications" onchange="saveNotificationSettings()" checked> 
+                            새로운 뉴스 알림
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <label>
+                            <input type="checkbox" id="stock-alerts" onchange="saveNotificationSettings()" checked> 
+                            관심종목 알림
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="settings-group">
+                    <h3>데이터 관리</h3>
+                    <div class="setting-item">
+                        <button onclick="clearAllData()" class="danger-btn">모든 데이터 삭제</button>
+                        <p class="setting-description">즐겨찾기와 설정이 모두 삭제됩니다.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 뉴스 상세 모달 -->
+    <div id="newsModal" class="modal" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 id="modalTitle"></h2>
+                <span class="close-btn" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="modal-meta">
+                    <span id="modalSource" class="modal-source"></span>
+                    <span id="modalDate" class="modal-date"></span>
+                </div>
+                <div id="modalSummary" class="modal-summary"></div>
+                <div class="modal-actions">
+                    <a id="modalLink" href="#" target="_blank" class="view-original-btn">📰 원문 보기</a>
+                    <button onclick="closeModal()" class="close-modal-btn">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
         let newsData = [];
+        let currentSortOrder = 'latest'; // 기본값: 최신순
+        let selectedStocks = new Set(); // 선택된 종목들
+        let availableStocks = new Map(); // 사용 가능한 종목과 뉴스 개수
+        let bookmarkedNews = new Set(); // 즐겨찾기한 뉴스들
+        let showBookmarkedOnly = false; // 즐겨찾기만 보기 필터
+        let watchlistStocks = new Set(); // 관심종목들
 
         // 페이지 로드시 뉴스 불러오기
-        document.addEventListener('DOMContentLoaded', loadNews);
+        document.addEventListener('DOMContentLoaded', function() {
+            // 테마 초기화
+            initTheme();
+            initSystemThemeListener();
+            
+            // 데이터 로드
+            loadBookmarksFromStorage();
+            loadWatchlistFromStorage();
+            loadNews();
+        });
+
+        // 테마 초기화
+        function initTheme() {
+            const savedTheme = localStorage.getItem('hotpick-theme') || 'light';
+            applyTheme(savedTheme);
+        }
+
+        // 알림 설정 저장
+        function saveNotificationSettings() {
+            const newsNotifications = document.getElementById('news-notifications').checked;
+            const stockAlerts = document.getElementById('stock-alerts').checked;
+            
+            localStorage.setItem('hotpick-news-notifications', newsNotifications);
+            localStorage.setItem('hotpick-stock-alerts', stockAlerts);
+            
+            showToast('알림 설정이 저장되었습니다.', 'success');
+        }
 
         // 뉴스 데이터 불러오기
         async function loadNews() {
@@ -357,8 +265,14 @@
                 newsData = await response.json();
                 console.log('받은 뉴스 데이터:', newsData);
 
+                // 종목 필터 초기화
+                initializeStockFilter();
+
                 // 뉴스 렌더링
                 renderNews();
+                
+                // 즐겨찾기 개수 업데이트
+                updateBookmarkCount();
 
                 // 성공시 UI 상태 변경
                 loading.style.display = 'none';
@@ -382,18 +296,99 @@
                 return;
             }
 
-            container.innerHTML = newsData.map(news => createNewsCard(news)).join('');
+            // 필터링된 뉴스 데이터 사용
+            const filteredNews = getFilteredNews();
+            
+            if (filteredNews.length === 0) {
+                container.innerHTML = '<div class="loading">선택한 종목에 대한 뉴스가 없습니다.</div>';
+                return;
+            }
+
+            container.innerHTML = filteredNews.map(news => createNewsCard(news)).join('');
             attachEventListeners();
+        }
+
+        // 필터링 및 정렬된 뉴스 데이터 반환
+        function getFilteredNews() {
+            let filtered = [...newsData];
+            
+            // 즐겨찾기 필터링 적용
+            if (showBookmarkedOnly) {
+                filtered = filtered.filter(news => bookmarkedNews.has(news.id));
+            }
+            
+            // 종목 필터링 적용
+            if (selectedStocks.size > 0) {
+                filtered = filtered.filter(news => {
+                    if (!news.stocks || !Array.isArray(news.stocks)) return false;
+                    return news.stocks.some(stock => selectedStocks.has(stock));
+                });
+            }
+            
+            // 정렬 적용
+            const sorted = filtered.sort((a, b) => {
+                const dateA = new Date(a.date);
+                const dateB = new Date(b.date);
+                
+                if (currentSortOrder === 'latest') {
+                    return dateB - dateA; // 최신순: 큰 날짜부터
+                } else {
+                    return dateA - dateB; // 오래된순: 작은 날짜부터
+                }
+            });
+            
+            return sorted;
+        }
+
+        // 주요 키워드 강조 함수
+        function highlightKeywords(text) {
+            // 강조할 주요 키워드 목록
+            const keywordsList = [
+                // 금융/경제 키워드
+                '금리', '인플레이션', '환율', '유가', '달러', '원화',
+                // 방향성 키워드
+                '상승', '하락', '급등', '급락', '하회', '상회', '증가', '감소',
+                // 실적 관련
+                '매출', '수익', '이익', '손실', '적자', '흑자', '실적', 
+                // 시장 관련
+                '코스피', '코스닥', '나스닥', 'S&P', '다우', '닛케이',
+                // 산업 키워드
+                '반도체', '바이오', '자동차', '배터리', '에너지', 'AI', '인공지능',
+                // 기업 활동
+                '투자', '인수', '합병', '상장', '거래', '계약', '파트너십'
+            ];
+            
+            let highlightedText = text;
+            
+            keywordsList.forEach(keyword => {
+                // 대소문자 구분없이 키워드 찾기
+                const regex = new RegExp(`(${keyword})`, 'gi');
+                highlightedText = highlightedText.replace(regex, '<span class="keyword-highlight">$1</span>');
+            });
+            
+            return highlightedText;
         }
 
         // 개별 뉴스 카드 생성
         function createNewsCard(news) {
             const sentiment = getSentiment(news.title + ' ' + news.summary);
             const timeAgo = getTimeAgo(news.date);
+            const priorityClass = news.priority ? `priority-${news.priority}` : '';
+            const priorityBadge = getPriorityBadge(news.priority);
+            
+            // 제목과 요약에 키워드 강조 적용
+            const highlightedTitle = highlightKeywords(news.title);
+            const highlightedSummary = highlightKeywords(news.summary);
+
+            // 즐겨찾기 상태 확인
+            const isBookmarked = bookmarkedNews.has(news.id);
+            const bookmarkClass = isBookmarked ? 'active' : '';
+            const bookmarkTitle = isBookmarked ? '즐겨찾기 제거' : '즐겨찾기 추가';
 
             return `
-                <article class="news-card ${sentiment}" data-news-id="${news.id}" onclick="openNews(${news.id})">
-                    <button class="bookmark-btn" onclick="toggleBookmark(event, ${news.id})" title="즐겨찾기">⭐</button>
+                <article class="news-card ${sentiment} ${priorityClass}" data-news-id="${news.id}" onclick="openNews(${news.id})">
+                    ${priorityBadge}
+                    <button class="bookmark-btn ${bookmarkClass}" onclick="toggleBookmark(event, ${news.id})" title="${bookmarkTitle}">⭐</button>
                     
                     <div class="chart-section"></div>
                     
@@ -406,11 +401,11 @@
                         </div>
                         
                         <h3 class="news-title">
-                            ${news.title}
+                            ${highlightedTitle}
                         </h3>
                         
                         <p class="news-summary">
-                            ${news.summary}
+                            ${highlightedSummary}
                         </p>
                         
                         <div class="news-meta">
@@ -451,33 +446,721 @@
             return dateString;
         }
 
+        // 중요도 배지 생성
+        function getPriorityBadge(priority) {
+            if (!priority || priority === 'normal') {
+                return '';
+            }
+            
+            const priorityLabels = {
+                urgent: '긴급',
+                important: '주요'
+            };
+            
+            const label = priorityLabels[priority] || '';
+            
+            return `<div class="priority-badge ${priority}">${label}</div>`;
+        }
+
         // 이벤트 리스너 설정
         function attachEventListeners() {
             // 이미 onclick으로 처리하므로 추가 설정 불필요
         }
 
-        // 즐겨찾기 토글
-        function toggleBookmark(event, newsId) {
-            event.stopPropagation(); // 카드 클릭 이벤트 방지
-            
-            const btn = event.target;
-            btn.classList.toggle('active');
-            
-            console.log(`뉴스 ${newsId} 즐겨찾기 토글`);
-            // TODO: 서버에 즐겨찾기 상태 전송
+        // 로컬스토리지에서 즐겨찾기 데이터 로드
+        function loadBookmarksFromStorage() {
+            const stored = localStorage.getItem('hotpick-bookmarks');
+            if (stored) {
+                try {
+                    const bookmarkIds = JSON.parse(stored);
+                    bookmarkedNews = new Set(bookmarkIds);
+                    console.log('즐겨찾기 로드됨:', bookmarkedNews);
+                } catch (e) {
+                    console.error('즐겨찾기 데이터 로드 실패:', e);
+                    bookmarkedNews = new Set();
+                }
+            }
         }
 
-        // 뉴스 상세 페이지 열기
-        function openNews(newsId) {
-            const news = newsData.find(n => n.id === newsId);
-            if (news && news.url) {
-                window.open(news.url, '_blank');
-            } else {
-                alert(`뉴스 ${newsId} 상세 정보를 준비 중입니다.`);
+        // 로컬스토리지에 즐겨찾기 데이터 저장
+        function saveBookmarksToStorage() {
+            const bookmarkIds = Array.from(bookmarkedNews);
+            localStorage.setItem('hotpick-bookmarks', JSON.stringify(bookmarkIds));
+
+        }
+
+        // 로컬스토리지에서 관심종목 불러오기
+        function loadWatchlistFromStorage() {
+            const stored = localStorage.getItem('hotpick-watchlist');
+            if (stored) {
+                try {
+                    const stockArray = JSON.parse(stored);
+                    watchlistStocks = new Set(stockArray);
+
+                } catch (e) {
+                    console.error('관심종목 로드 실패:', e);
+                    watchlistStocks = new Set();
+                }
+            }
+        }
+
+        // 로컬스토리지에 관심종목 저장
+        function saveWatchlistToStorage() {
+            const stockArray = Array.from(watchlistStocks);
+            localStorage.setItem('hotpick-watchlist', JSON.stringify(stockArray));
+
+        }
+
+        // 즐겨찾기 토글
+        function toggleBookmark(event, newsId) {
+            console.log('toggleBookmark 호출됨:', newsId, event.target);
+            event.preventDefault();
+            event.stopPropagation(); // 카드 클릭 이벤트 방지
+            
+            const btn = event.target.closest('.bookmark-btn');
+            if (!btn) {
+                console.error('즐겨찾기 버튼을 찾을 수 없습니다');
+                return;
             }
             
-            console.log(`뉴스 ${newsId} 클릭`);
+            // 즐겨찾기 상태 토글
+            if (bookmarkedNews.has(newsId)) {
+                bookmarkedNews.delete(newsId);
+                btn.classList.remove('active');
+                btn.title = '즐겨찾기 추가';
+                console.log(`뉴스 ${newsId} 즐겨찾기 제거`);
+            } else {
+                bookmarkedNews.add(newsId);
+                btn.classList.add('active');
+                btn.title = '즐겨찾기 제거';
+                console.log(`뉴스 ${newsId} 즐겨찾기 추가`);
+            }
+            
+            // 로컬스토리지에 저장
+            saveBookmarksToStorage();
+            
+            // 즐겨찾기 개수 업데이트
+            updateBookmarkCount();
+        }
+
+        // 즐겨찾기 필터 토글
+        function toggleBookmarkFilter() {
+            showBookmarkedOnly = !showBookmarkedOnly;
+            
+            const btn = document.querySelector('.bookmark-filter-btn');
+            if (showBookmarkedOnly) {
+                btn.classList.add('active');
+                btn.innerHTML = '<span class="icon">⭐</span> 전체 보기 <span id="bookmark-count" class="count">' + bookmarkedNews.size + '</span>';
+            } else {
+                btn.classList.remove('active');
+                btn.innerHTML = '<span class="icon">⭐</span> 즐겨찾기만 <span id="bookmark-count" class="count">' + bookmarkedNews.size + '</span>';
+            }
+            
+            renderNews();
+            console.log('즐겨찾기 필터 토글:', showBookmarkedOnly);
+        }
+
+        // 즐겨찾기 개수 업데이트
+        function updateBookmarkCount() {
+            const countElement = document.getElementById('bookmark-count');
+            if (countElement) {
+                countElement.textContent = bookmarkedNews.size;
+            }
+        }
+
+        // 뉴스 상세 모달 열기
+        function openNews(newsId) {
+            const news = newsData.find(n => n.id === newsId);
+            if (!news) {
+                alert(`뉴스 ${newsId} 정보를 찾을 수 없습니다.`);
+                return;
+            }
+
+            // 모달 내용 채우기 (키워드 강조 적용)
+            document.getElementById('modalTitle').innerHTML = highlightKeywords(news.title);
+            document.getElementById('modalSource').textContent = news.source;
+            document.getElementById('modalDate').textContent = getTimeAgo(news.date);
+            document.getElementById('modalSummary').innerHTML = highlightKeywords(news.summary);
+            
+            const modalLink = document.getElementById('modalLink');
+            if (news.url) {
+                modalLink.href = news.url;
+                modalLink.style.display = 'inline-block';
+            } else {
+                modalLink.style.display = 'none';
+            }
+
+            // 모달 표시
+            document.getElementById('newsModal').style.display = 'block';
+            document.body.style.overflow = 'hidden'; // 스크롤 방지
+            
+            console.log(`뉴스 ${newsId} 상세 보기`);
             // TODO: 클릭 로그 서버에 전송
+        }
+
+        // 모달 닫기
+        function closeModal(event) {
+            if (event && event.target !== event.currentTarget) {
+                return; // 자식 요소 클릭시 닫지 않음
+            }
+            
+            document.getElementById('newsModal').style.display = 'none';
+            document.body.style.overflow = 'auto'; // 스크롤 복원
+        }
+
+        // ESC 키로 모달 닫기
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        function toggleView(view) {
+            const container = document.getElementById('news-container');
+            const gridBtn = document.querySelector('.grid-view');
+            const listBtn = document.querySelector('.list-view');
+
+            if (view === 'list') {
+                container.classList.add('list-view');
+                gridBtn.classList.remove('active');
+                listBtn.classList.add('active');
+            } else {
+                container.classList.remove('list-view');
+                gridBtn.classList.add('active');
+                listBtn.classList.remove('active');
+            }
+        }
+
+        // 정렬 토글 함수
+        function toggleSort(sortOrder) {
+            currentSortOrder = sortOrder;
+            
+            // 버튼 활성화 상태 변경
+            document.querySelectorAll('.sort-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.closest('.sort-btn').classList.add('active');
+            
+            // 뉴스 다시 렌더링
+            renderNews();
+            
+            console.log(`정렬 방식 변경: ${sortOrder}`);
+        }
+
+        // 현재 활성 페이지
+        let currentPage = 'home';
+
+        // 모바일 메뉴 토글
+        function toggleMobileMenu() {
+            const navMenu = document.querySelector('.nav-menu');
+            navMenu.classList.toggle('active');
+        }
+
+        // 페이지 전환
+        function showPage(pageId) {
+            // 모든 페이지 숨기기
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // 모든 네비게이션 링크 비활성화
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // 선택된 페이지 표시
+            document.getElementById(pageId + '-page').classList.add('active');
+            document.querySelector(`[data-page="${pageId}"]`).classList.add('active');
+            
+            currentPage = pageId;
+            
+            // 페이지별 제목 변경
+            const pageTitles = {
+                'home': '🔥 핫Pick스탁 | 홈 대시보드',
+                'search': '🔥 핫Pick스탁 | 종목 검색',
+                'watchlist': '🔥 핫Pick스탁 | 내 관심종목',
+                'settings': '🔥 핫Pick스탁 | 설정'
+            };
+            document.title = pageTitles[pageId] || '🔥 핫Pick스탁';
+            
+            // 페이지별 초기화
+            switch(pageId) {
+                case 'home':
+                    // 홈 페이지는 이미 로드된 뉴스 사용
+                    break;
+                case 'search':
+                    initSearchPage();
+                    break;
+                case 'watchlist':
+                    loadWatchlistPage();
+                    break;
+                case 'settings':
+                    loadSettingsPage();
+                    break;
+            }
+            
+            // 모바일에서 메뉴 닫기
+            const navMenu = document.querySelector('.nav-menu');
+            if (navMenu.classList.contains('active')) {
+                navMenu.classList.remove('active');
+            }
+        }
+
+
+
+        // 검색 페이지 초기화
+        function initSearchPage() {
+            const searchResults = document.getElementById('search-results');
+            const searchInput = document.getElementById('stock-search');
+            
+            searchResults.innerHTML = '<p>종목명이나 종목코드를 입력하여 검색해보세요.</p>';
+            
+            // 엔터키 이벤트 리스너 추가
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchStock();
+                }
+            });
+        }
+
+        // 종목 검색
+        function searchStock() {
+            const searchInput = document.getElementById('stock-search');
+            const searchResults = document.getElementById('search-results');
+            const query = searchInput.value.trim();
+            
+            if (!query) {
+                alert('검색어를 입력해주세요.');
+                return;
+            }
+            
+            // 더미 검색 결과 (실제 구현시 API 호출)
+            const dummyResults = [
+                { code: '005930', name: '삼성전자', price: '71,000', change: '+1,000 (+1.43%)' },
+                { code: '000660', name: 'SK하이닉스', price: '89,200', change: '-1,500 (-1.65%)' },
+                { code: '035420', name: 'NAVER', price: '198,500', change: '+2,500 (+1.28%)' }
+            ].filter(stock => 
+                stock.name.includes(query) || stock.code.includes(query)
+            );
+            
+            if (dummyResults.length > 0) {
+                searchResults.innerHTML = dummyResults.map(stock => {
+                    const isWatchlisted = watchlistStocks.has(stock.code);
+                    const buttonText = isWatchlisted ? '관심종목 제거' : '관심종목 추가';
+                    const buttonClass = isWatchlisted ? 'remove-watchlist-btn' : 'add-watchlist-btn';
+                    
+                    return `
+                        <div class="stock-result">
+                            <div class="stock-info">
+                                <h4>${stock.name} (${stock.code})</h4>
+                                <p class="stock-price">${stock.price} <span class="change">${stock.change}</span></p>
+                            </div>
+                            <button onclick="addToWatchlist('${stock.code}')" class="${buttonClass}">${buttonText}</button>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                searchResults.innerHTML = '<p>검색 결과가 없습니다.</p>';
+            }
+        }
+
+        // 관심종목 페이지 로드
+        function loadWatchlistPage() {
+            const bookmarkedNewsCount = document.getElementById('bookmarked-news-count');
+            const watchlistStocksCount = document.getElementById('watchlist-stocks-count');
+            const bookmarkedNewsContainer = document.getElementById('bookmarked-news');
+            
+            // 즐겨찾기 뉴스 개수 업데이트
+            bookmarkedNewsCount.textContent = bookmarkedNews.size;
+            
+            // 관심종목 개수 업데이트
+            watchlistStocksCount.textContent = watchlistStocks.size;
+            
+            // 관심종목 목록을 추가로 표시할 영역을 찾거나 생성
+            let watchlistContainer = document.getElementById('watchlist-stocks');
+            if (!watchlistContainer) {
+                // 관심종목 컨테이너가 없다면 bookmarked-news 위에 추가
+                watchlistContainer = document.createElement('div');
+                watchlistContainer.id = 'watchlist-stocks';
+                watchlistContainer.className = 'watchlist-stocks';
+                bookmarkedNewsContainer.parentNode.insertBefore(watchlistContainer, bookmarkedNewsContainer);
+            }
+            
+            // 관심종목 표시
+            if (watchlistStocks.size > 0) {
+                const stockArray = Array.from(watchlistStocks);
+                const stockItems = stockArray.map(stockCode => {
+                    // 더미 주식 데이터 (실제로는 API에서 가져와야 함)
+                    const stockInfo = getStockInfo(stockCode);
+                    return `
+                        <div class="watchlist-stock-item">
+                            <div class="stock-info">
+                                <h4>${stockInfo.name} (${stockCode})</h4>
+                                <p class="stock-price">${stockInfo.price} <span class="change ${stockInfo.changeClass}">${stockInfo.change}</span></p>
+                            </div>
+                            <button onclick="removeFromWatchlist('${stockCode}')" class="remove-watchlist-btn">제거</button>
+                        </div>
+                    `;
+                }).join('');
+                
+                watchlistContainer.innerHTML = `
+                    <h3>📈 내 관심종목 (${watchlistStocks.size}개)</h3>
+                    <div class="watchlist-stocks-grid">
+                        ${stockItems}
+                    </div>
+                    <hr style="margin: 24px 0;">
+                `;
+            } else {
+                watchlistContainer.innerHTML = `
+                    <h3>📈 내 관심종목</h3>
+                    <p>아직 관심종목이 없습니다. 종목 검색에서 관심종목을 추가해보세요.</p>
+                    <hr style="margin: 24px 0;">
+                `;
+            }
+            
+            // 즐겨찾기한 뉴스들 표시
+            if (bookmarkedNews.size > 0 && newsData) {
+                const bookmarkedNewsList = newsData.filter(news => bookmarkedNews.has(news.id));
+                bookmarkedNewsContainer.innerHTML = `
+                    <h3>⭐ 즐겨찾기 뉴스 (${bookmarkedNews.size}개)</h3>
+                    <div class="bookmarked-news-grid">
+                        ${bookmarkedNewsList.map(news => createNewsCard(news)).join('')}
+                    </div>
+                `;
+            } else {
+                bookmarkedNewsContainer.innerHTML = `
+                    <h3>⭐ 즐겨찾기 뉴스</h3>
+                    <p>즐겨찾기한 뉴스가 없습니다.</p>
+                `;
+            }
+        }
+
+        // 더미 주식 정보 가져오기 (실제로는 API 사용)
+        function getStockInfo(stockCode) {
+            const stockData = {
+                '005930': { name: '삼성전자', price: '71,000원', change: '+1,000 (+1.43%)', changeClass: 'positive' },
+                '000660': { name: 'SK하이닉스', price: '89,200원', change: '-1,500 (-1.65%)', changeClass: 'negative' },
+                '035420': { name: 'NAVER', price: '198,500원', change: '+2,500 (+1.28%)', changeClass: 'positive' }
+            };
+            
+            return stockData[stockCode] || { 
+                name: '알 수 없는 종목', 
+                price: '---', 
+                change: '---', 
+                changeClass: 'neutral' 
+            };
+        }
+
+        // 관심종목에서 제거
+        function removeFromWatchlist(stockCode) {
+            const stockInfo = getStockInfo(stockCode);
+            showConfirm(
+                `${stockInfo.name} 종목을 관심종목에서 제거하시겠습니까?`,
+                () => {
+                    watchlistStocks.delete(stockCode);
+                    saveWatchlistToStorage();
+                    loadWatchlistPage(); // 페이지 다시 로드
+                    showToast(`${stockInfo.name} 종목이 관심종목에서 제거되었습니다.`, 'warning');
+                }
+            );
+        }
+
+        // 커스텀 확인 창
+        function showConfirm(message, onConfirm) {
+            // 기존 확인창 제거
+            const existingConfirm = document.querySelector('.custom-confirm');
+            if (existingConfirm) {
+                existingConfirm.remove();
+            }
+            
+            // 확인창 HTML
+            const confirmHTML = `
+                <div class="custom-confirm" onclick="closeConfirm(event)">
+                    <div class="confirm-content" onclick="event.stopPropagation()">
+                        <div class="confirm-message">${message}</div>
+                        <div class="confirm-buttons">
+                            <button class="confirm-cancel" onclick="closeConfirm()">취소</button>
+                            <button class="confirm-ok" onclick="handleConfirm()">확인</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.insertAdjacentHTML('beforeend', confirmHTML);
+            
+            // 확인 버튼 클릭 핸들러
+            window.handleConfirm = () => {
+                onConfirm();
+                closeConfirm();
+            };
+            
+            // 애니메이션
+            setTimeout(() => {
+                document.querySelector('.custom-confirm').classList.add('show');
+            }, 10);
+        }
+
+        // 확인창 닫기
+        function closeConfirm(event) {
+            if (event && event.target !== event.currentTarget) return;
+            
+            const confirmEl = document.querySelector('.custom-confirm');
+            if (confirmEl) {
+                confirmEl.classList.remove('show');
+                setTimeout(() => confirmEl.remove(), 300);
+            }
+        }
+
+        // 설정 페이지 로드
+        function loadSettingsPage() {
+            // 저장된 설정 불러오기
+            const theme = localStorage.getItem('hotpick-theme') || 'light';
+            const newsNotifications = localStorage.getItem('hotpick-news-notifications') !== 'false';
+            const stockAlerts = localStorage.getItem('hotpick-stock-alerts') !== 'false';
+            
+            document.getElementById('theme-select').value = theme;
+            document.getElementById('news-notifications').checked = newsNotifications;
+            document.getElementById('stock-alerts').checked = stockAlerts;
+        }
+
+        // 테마 변경
+        function changeTheme() {
+            const themeSelect = document.getElementById('theme-select');
+            const selectedTheme = themeSelect.value;
+            
+            applyTheme(selectedTheme);
+            localStorage.setItem('hotpick-theme', selectedTheme);
+            
+            showToast(`테마가 ${getThemeDisplayName(selectedTheme)}로 변경되었습니다.`, 'success');
+        }
+
+        // 테마 적용
+        function applyTheme(theme) {
+            const htmlElement = document.documentElement;
+            
+            if (theme === 'auto') {
+                // 시스템 설정에 따라 자동 결정
+                const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                htmlElement.setAttribute('data-theme', systemPrefersDark ? 'dark' : 'light');
+            } else {
+                htmlElement.setAttribute('data-theme', theme);
+            }
+        }
+
+        // 테마 표시명 가져오기
+        function getThemeDisplayName(theme) {
+            const themeNames = {
+                'light': '라이트 모드',
+                'dark': '다크 모드', 
+                'auto': '시스템 설정'
+            };
+            return themeNames[theme] || '라이트 모드';
+        }
+
+        // 시스템 테마 변경 감지
+        function initSystemThemeListener() {
+            const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            
+            mediaQuery.addEventListener('change', () => {
+                const currentTheme = localStorage.getItem('hotpick-theme') || 'light';
+                if (currentTheme === 'auto') {
+                    applyTheme('auto');
+                }
+            });
+        }
+
+        // 모든 데이터 삭제
+        function clearAllData() {
+            if (confirm('정말로 모든 데이터를 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) {
+                localStorage.clear();
+                bookmarkedNews.clear();
+                selectedStocks.clear();
+                alert('모든 데이터가 삭제되었습니다.');
+                location.reload();
+            }
+        }
+
+        // 토스트 알림 표시
+        function showToast(message, type = 'success') {
+            // 기존 토스트 제거
+            const existingToast = document.querySelector('.toast');
+            if (existingToast) {
+                existingToast.remove();
+            }
+            
+            // 새 토스트 생성
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            // 애니메이션 표시
+            setTimeout(() => toast.classList.add('show'), 100);
+            
+            // 3초 후 자동 제거
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // 관심종목 추가/제거
+        function addToWatchlist(stockCode) {
+            const stockInfo = getStockInfo(stockCode);
+            
+            if (watchlistStocks.has(stockCode)) {
+                watchlistStocks.delete(stockCode);
+                saveWatchlistToStorage();
+                showToast(`${stockInfo.name} 종목이 관심종목에서 제거되었습니다.`, 'warning');
+            } else {
+                watchlistStocks.add(stockCode);
+                saveWatchlistToStorage();
+                showToast(`${stockInfo.name} 종목이 관심종목에 추가되었습니다.`, 'success');
+            }
+            
+            // 관심종목 페이지가 활성화되어 있다면 업데이트
+            if (currentPage === 'watchlist') {
+                loadWatchlistPage();
+            }
+        }
+
+
+
+        // 종목 필터 초기화
+        function initializeStockFilter() {
+            availableStocks.clear();
+            
+            // 모든 뉴스에서 종목 추출 및 카운트
+            newsData.forEach(news => {
+                if (news.stocks && Array.isArray(news.stocks)) {
+                    news.stocks.forEach(stock => {
+                        const count = availableStocks.get(stock) || 0;
+                        availableStocks.set(stock, count + 1);
+                    });
+                }
+            });
+            
+            // 필터 버튼 생성
+            createFilterButtons();
+            
+            // 필터 섹션 표시
+            document.getElementById('stock-filter').style.display = 'block';
+        }
+
+        // 필터 버튼 생성
+        function createFilterButtons() {
+            const filterButtons = document.getElementById('filter-buttons');
+            
+            if (!filterButtons) {
+                console.error('filter-buttons 요소를 찾을 수 없습니다.');
+                return;
+            }
+            
+            console.log('사용 가능한 종목들:', availableStocks);
+            
+            // 종목을 알파벳 순으로 정렬
+            const sortedStocks = Array.from(availableStocks.entries())
+                .sort(([a], [b]) => a.localeCompare(b, 'ko'));
+            
+            console.log('정렬된 종목들:', sortedStocks);
+            
+            filterButtons.innerHTML = sortedStocks
+                .map(([stock, count]) => 
+                    `<button class="filter-btn" data-stock="${stock}" onclick="toggleStockFilter('${stock}')">
+                        ${stock}
+                        <span class="count">${count}</span>
+                    </button>`
+                ).join('');
+                
+            console.log('필터 버튼 생성 완료, 생성된 개수:', sortedStocks.length);
+        }
+
+        // 종목 필터 토글
+        function toggleStockFilter(stock) {
+            if (selectedStocks.has(stock)) {
+                selectedStocks.delete(stock);
+            } else {
+                selectedStocks.add(stock);
+            }
+            
+            updateFilterButtons();
+            updateSelectedFilters();
+            updateFilterCount();
+            renderNews();
+        }
+
+        // 필터 버튼 상태 업데이트
+        function updateFilterButtons() {
+            const buttons = document.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => {
+                const stock = btn.dataset.stock;
+                if (selectedStocks.has(stock)) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        // 선택된 필터 태그 업데이트
+        function updateSelectedFilters() {
+            const container = document.getElementById('selected-filters');
+            
+            if (selectedStocks.size === 0) {
+                container.style.display = 'none';
+                return;
+            }
+            
+            container.style.display = 'flex';
+            container.innerHTML = Array.from(selectedStocks)
+                .map(stock => 
+                    `<div class="selected-filter-tag">
+                        ${stock}
+                        <span class="remove" onclick="toggleStockFilter('${stock}')">×</span>
+                    </div>`
+                ).join('');
+        }
+
+        // 필터 카운트 업데이트
+        function updateFilterCount() {
+            const countElement = document.getElementById('filter-count');
+            const clearBtn = document.getElementById('clear-filters-btn');
+            const toggleBtn = document.getElementById('toggle-all-btn');
+            
+            countElement.textContent = `${selectedStocks.size}개 선택됨`;
+            clearBtn.disabled = selectedStocks.size === 0;
+            
+            if (selectedStocks.size === availableStocks.size) {
+                toggleBtn.textContent = '전체 해제';
+            } else {
+                toggleBtn.textContent = '전체 선택';
+            }
+        }
+
+        // 모든 필터 초기화
+        function clearAllFilters() {
+            selectedStocks.clear();
+            updateFilterButtons();
+            updateSelectedFilters();
+            updateFilterCount();
+            renderNews();
+        }
+
+        // 전체 선택/해제 토글
+        function toggleAllFilters() {
+            if (selectedStocks.size === availableStocks.size) {
+                // 전체 해제
+                clearAllFilters();
+            } else {
+                // 전체 선택
+                availableStocks.forEach((count, stock) => {
+                    selectedStocks.add(stock);
+                });
+                updateFilterButtons();
+                updateSelectedFilters();
+                updateFilterCount();
+                renderNews();
+            }
         }
     </script>
 </body>

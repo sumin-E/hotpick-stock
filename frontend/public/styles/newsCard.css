@@ -19,6 +19,7 @@
   border: 1px solid #f1f3f4;
   position: relative;
   min-height: 160px;
+  cursor: pointer;
 }
 
 .news-card:hover {
@@ -30,12 +31,40 @@
 /* 차트 이미지 영역 */
 .news-card .chart-section {
   flex: 0 0 140px;
-  background: #f8f9fa;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   overflow: hidden;
+}
+
+.news-card.bullish .chart-section {
+  background: linear-gradient(135deg, #4285f4 0%, #1a73e8 100%);
+}
+
+.news-card.bearish .chart-section {
+  background: linear-gradient(135deg, #ea4335 0%, #d93025 100%);
+}
+
+.news-card.neutral .chart-section {
+  background: linear-gradient(135deg, #34a853 0%, #137333 100%);
+}
+
+.news-card .chart-section::after {
+  font-size: 32px;
+  color: white;
+}
+
+.news-card.bullish .chart-section::after {
+  content: "📈";
+}
+
+.news-card.bearish .chart-section::after {
+  content: "📉";
+}
+
+.news-card.neutral .chart-section::after {
+  content: "📊";
 }
 
 .news-card .chart-section img {
@@ -87,6 +116,12 @@
 .news-card.bearish .category-tag.primary {
   background: #fce8e6;
   color: #d93025;
+}
+
+/* 중립 종목 태그 */
+.news-card.neutral .category-tag.primary {
+  background: #e6f4ea;
+  color: #137333;
 }
 
 /* 뉴스 제목 */
@@ -142,6 +177,10 @@
 }
 
 /* 상승/하락 인디케이터 */
+.news-card.bullish {
+  border-left: 4px solid transparent;
+}
+
 .news-card.bullish::before {
   content: '';
   position: absolute;
@@ -150,6 +189,10 @@
   bottom: 0;
   width: 4px;
   background: linear-gradient(180deg, #1a73e8 0%, #4285f4 100%);
+}
+
+.news-card.bearish {
+  border-left: 4px solid transparent;
 }
 
 .news-card.bearish::before {
@@ -163,6 +206,10 @@
 }
 
 /* 중립 뉴스 */
+.news-card.neutral {
+  border-left: 4px solid transparent;
+}
+
 .news-card.neutral::before {
   content: '';
   position: absolute;
@@ -190,8 +237,8 @@
 /* 즐겨찾기 버튼 */
 .news-card .bookmark-btn {
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: 50px;
+  right: 12px;
   width: 32px;
   height: 32px;
   border: none;
@@ -201,10 +248,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0;
-  transform: scale(0.8);
+  opacity: 0.7;
+  transform: scale(0.9);
   transition: all 0.2s ease;
   backdrop-filter: blur(4px);
+  z-index: 15;
+  font-size: 14px;
 }
 
 .news-card:hover .bookmark-btn {
@@ -215,10 +264,19 @@
 .news-card .bookmark-btn:hover {
   background: rgba(255, 255, 255, 1);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transform: scale(1.05);
 }
 
 .news-card .bookmark-btn.active {
-  color: #fbbc04;
+  color: #ffd700;
+  background: rgba(255, 215, 0, 0.1);
+  opacity: 1;
+  transform: scale(1);
+}
+
+.news-card .bookmark-btn.active:hover {
+  color: #ffa500;
+  background: rgba(255, 215, 0, 0.2);
 }
 
 /* 반응형 디자인 */
@@ -251,6 +309,21 @@
     font-size: 13px;
     -webkit-line-clamp: 3;
   }
+  
+  .priority-badge {
+    top: 8px;
+    right: 8px;
+    padding: 3px 8px;
+    font-size: 10px;
+  }
+  
+  .news-card .bookmark-btn {
+    right: 8px;
+    top: 44px;
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -265,5 +338,156 @@
   
   .news-card .chart-section {
     flex: 0 0 100px;
+  }
+}
+
+/* 중요도 배지 스타일 */
+.priority-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 4px 10px;
+  border-radius: 16px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 12;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(4px);
+}
+
+.priority-badge.urgent {
+  background: linear-gradient(135deg, #ff4757 0%, #ff3742 100%);
+  color: white;
+  animation: urgentPulse 2s infinite;
+}
+
+.priority-badge.important {
+  background: linear-gradient(135deg, #ffa502 0%, #ff6348 100%);
+  color: white;
+}
+
+.priority-badge.normal {
+  display: none; /* 일반 뉴스는 배지 표시 안 함 */
+}
+
+@keyframes urgentPulse {
+  0%, 100% {
+    box-shadow: 0 2px 8px rgba(255, 71, 87, 0.3);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 4px 16px rgba(255, 71, 87, 0.5);
+    transform: scale(1.02);
+  }
+}
+
+.priority-badge::before {
+  font-size: 12px;
+}
+
+.priority-badge.urgent::before {
+  content: '🚨';
+}
+
+.priority-badge.important::before {
+  content: '⚠️';
+}
+
+/* 중요도별 카드 테두리 강조 */
+.news-card.priority-urgent {
+  border-left: 4px solid #ff4757;
+  box-shadow: 0 4px 20px rgba(255, 71, 87, 0.15);
+}
+
+.news-card.priority-important {
+  border-left: 4px solid #ffa502;
+  box-shadow: 0 4px 20px rgba(255, 165, 2, 0.15);
+}
+
+/* 키워드 강조 스타일 - 자연스러운 텍스트 강조 */
+.keyword-highlight {
+  color: #2563eb;
+  font-weight: 600;
+  transition: color 0.15s ease;
+}
+
+/* 감정별 키워드 강조 - 색상만으로 구분 */
+.news-card.bullish .keyword-highlight {
+  color: #1d4ed8;
+}
+
+.news-card.bearish .keyword-highlight {
+  color: #dc2626;
+}
+
+.news-card.neutral .keyword-highlight {
+  color: #059669;
+}
+
+/* 긴급도별 키워드 강조 */
+.news-card.priority-urgent .keyword-highlight {
+  color: #b91c1c;
+  font-weight: 700;
+}
+
+.news-card.priority-important .keyword-highlight {
+  color: #d97706;
+  font-weight: 700;
+}
+
+/* 호버 효과 - 약간 밝아지는 효과 */
+.keyword-highlight:hover {
+  color: #1e40af;
+}
+
+.news-card.bullish .keyword-highlight:hover {
+  color: #1e3a8a;
+}
+
+.news-card.bearish .keyword-highlight:hover {
+  color: #991b1b;
+}
+
+.news-card.neutral .keyword-highlight:hover {
+  color: #047857;
+}
+
+/* 다크모드 지원 */
+@media (prefers-color-scheme: dark) {
+  .keyword-highlight {
+    color: #60a5fa;
+  }
+  
+  .news-card.bullish .keyword-highlight {
+    color: #3b82f6;
+  }
+  
+  .news-card.bearish .keyword-highlight {
+    color: #f87171;
+  }
+  
+  .news-card.neutral .keyword-highlight {
+    color: #34d399;
+  }
+  
+  .keyword-highlight:hover {
+    color: #93c5fd;
+  }
+  
+  .news-card.bullish .keyword-highlight:hover {
+    color: #60a5fa;
+  }
+  
+  .news-card.bearish .keyword-highlight:hover {
+    color: #fca5a5;
+  }
+  
+  .news-card.neutral .keyword-highlight:hover {
+    color: #6ee7b7;
   }
 }
